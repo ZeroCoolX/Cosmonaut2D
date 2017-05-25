@@ -38,8 +38,8 @@ public class Tiling : MonoBehaviour {
             float camHorizontalExtend = cam.orthographicSize * (Screen.width / Screen.height); //center of cam to right bar = half the cam view
 
             //calculate the x position where the camera can see the edge of the sprite
-            float visibleEdgePosRight = (myTransform.position.x + spriteWidth / 2) - camHorizontalExtend;
-            float visibleEdgePosLeft = (myTransform.position.x - spriteWidth / 2) + camHorizontalExtend;
+            float visibleEdgePosRight = (myTransform.position.x + (spriteWidth * 0.75f) / 2) - camHorizontalExtend;
+            float visibleEdgePosLeft = (myTransform.position.x - (spriteWidth * 0.75f) / 2) + camHorizontalExtend;
             
             //check if position of camera is >= to where the element is visible
             if(cam.transform.position.x >= visibleEdgePosRight - offsetX && !hasRightBuddy) {//dont instantiate if rightbuddy already exists
@@ -55,11 +55,11 @@ public class Tiling : MonoBehaviour {
     //Creates a buddy on the given side denoted by direction
     void createBuddy(int direction) { //-1<---  --->1
         //calculating the new position for the new buddy
-        Vector3 newPosition = new Vector3(myTransform.position.x + (spriteWidth / 2) * direction, myTransform.position.y, myTransform.position.z); // must half the width since origin is left corner
+        Vector3 newPosition = new Vector3(myTransform.position.x + (spriteWidth * 0.75f) * direction, myTransform.position.y, myTransform.position.z); // must half the width since origin is left corner
         Transform newBuddy = Instantiate(myTransform, newPosition, myTransform.rotation) as Transform;//clone of the object
 
         //flips the background sprite so it matches the seam perfectly. gg brackeys
-        if (reverseScale) {//object is not tileable
+        if (true) {//object is not tileable
             newBuddy.localScale = new Vector3(newBuddy.localScale.x*-1, newBuddy.localScale.y, newBuddy.localScale.z);//invert the x scale of the new buddy so it perfectly loops
         }
 

@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 9d5615f3ddd382446a21fa2ca8eb3a4d
-timeCreated: 1495678990
+timeCreated: 1495680518
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -72,12 +72,12 @@ TextureImporter:
     overridden: 0
   - buildTarget: Standalone
     maxTextureSize: 2048
-    textureFormat: -1
+    textureFormat: 2
     textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
-    overridden: 0
+    overridden: 1
   - buildTarget: Android
     maxTextureSize: 2048
     textureFormat: -1
@@ -98,7 +98,7 @@ TextureImporter:
         width: 17
         height: 32
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
@@ -111,7 +111,7 @@ TextureImporter:
         width: 16
         height: 32
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
@@ -124,7 +124,7 @@ TextureImporter:
         width: 15
         height: 32
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
@@ -137,7 +137,7 @@ TextureImporter:
         width: 15
         height: 32
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
@@ -150,7 +150,7 @@ TextureImporter:
         width: 15
         height: 32
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
@@ -163,7 +163,7 @@ TextureImporter:
         width: 16
         height: 32
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
@@ -176,7 +176,7 @@ TextureImporter:
         width: 17
         height: 32
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
@@ -214,8 +214,8 @@ TextureImporter:
         y: 153
         width: 12
         height: 5
-      alignment: 4
-      pivot: {x: 0, y: 0.5}
+      alignment: 9
+      pivot: {x: 0.18, y: 0.57}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
