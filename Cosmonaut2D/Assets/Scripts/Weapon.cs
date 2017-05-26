@@ -9,6 +9,7 @@ public class Weapon : MonoBehaviour {
     public LayerMask whatToHit;      //will tell us what we want to hit
 
     public Transform bulletTrailPrefab;
+    public Transform hitPrefab;
     public Transform muzzleFlashPrefab;
 
     public float timeToSpawnEffect = 0f;
@@ -44,13 +45,7 @@ public class Weapon : MonoBehaviour {
         Vector2 firePointPosition = new Vector2(firePoint.position.x, firePoint.position.y);
         //collect the hit data
         RaycastHit2D hit = Physics2D.Raycast(firePointPosition, mousePosition - firePointPosition, 100, whatToHit);
-        if (Time.time >= timeToSpawnEffect) {
-            //Bullet effect
-            //use with yield if you want below  
-            //StartCoroutine("generateEffect"); //allows to use yield
-            generateEffect();
-            timeToSpawnEffect = Time.time + 1 / effectSpawnRate;
-        }
+
         Debug.DrawLine(firePointPosition, (mousePosition - firePointPosition)*100, Color.cyan);//the bullet fires off into the direction not stopping where the mouse is
         if(hit.collider != null) {
             Debug.DrawLine(firePointPosition,hit.point, Color.red);//the bullet fires off into the direction not stopping where the mouse is
@@ -60,11 +55,32 @@ public class Weapon : MonoBehaviour {
                 Debug.Log("We hit " + hit.collider.name + " and did " + Damage + " damage");
             }
         }
+
+        if (Time.time >= timeToSpawnEffect) {
+            //Bullet effect
+            Vector3 hitPos;
+            Vector3 hitNormal;
+
+            if(hit.collider == null) {
+                hitPos = (mousePosition - firePointPosition) * 30;//allows bullet to fly off into space
+                hitNormal = new Vector3(9999, 9999, 9999);  //rediculously huge
+            }else {
+                hitPos = hit.point;
+                hitNormal = hit.normal;
+            }
+            generateEffect(hitPos, hitNormal);
+            timeToSpawnEffect = Time.time + 1 / effectSpawnRate;
+        }
     }
 
     //return type allows for yield to be used
-    /*IEnumerator*/void generateEffect() {
-        Instantiate(bulletTrailPrefab, firePoint.position, firePoint.rotation);
+    void generateEffect(Vector3 hitPos, Vector3 hitNormal) {
+
+        if(hitNormal != new Vector3(9999, 9999, 9999)) {
+            //we hit something 
+            Transform hitParticles = Instantiate(hitPrefab, hitPos, Quaternion.FromToRotation(Vector3.up, hitNormal)) as Transform;
+            Destroy(hitParticles.gameObject, 1f);
+        }
         Transform clone = Instantiate(muzzleFlashPrefab, firePoint.position, firePoint.rotation) as Transform; //when assiging to variable remember to cast to what type you expect
         //parent to firepoint
         clone.parent = firePoint;
@@ -74,7 +90,15 @@ public class Weapon : MonoBehaviour {
         clone.localScale = new Vector3(size, size, size);
 
         //use if you want with coroutine above 
-        //yield return 0; //skip one frame before calling below code
         Destroy(clone.gameObject, 0.02f);
+
+        Transform trail = Instantiate(bulletTrailPrefab, firePoint.position, firePoint.rotation) as Transform;
+        LineRenderer lr = trail.GetComponent<LineRenderer>();
+
+        if (lr != null) {
+            lr.SetPosition(0, firePoint.position);//start position index
+            lr.SetPosition(1, hitPos);//end position index
+        }
+        Destroy(trail.gameObject, 0.02f);
     }
 }
