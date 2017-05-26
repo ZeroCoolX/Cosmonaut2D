@@ -9,6 +9,8 @@ public class Weapon : MonoBehaviour {
     public LayerMask whatToHit;      //will tell us what we want to hit
 
     public Transform bulletTrailPrefab;
+    public Transform muzzleFlashPrefab;
+
     public float timeToSpawnEffect = 0f;
     public float effectSpawnRate = 10f;
 
@@ -44,6 +46,8 @@ public class Weapon : MonoBehaviour {
         RaycastHit2D hit = Physics2D.Raycast(firePointPosition, mousePosition - firePointPosition, 100, whatToHit);
         if (Time.time >= timeToSpawnEffect) {
             //Bullet effect
+            //use with yield if you want below  
+            //StartCoroutine("generateEffect"); //allows to use yield
             generateEffect();
             timeToSpawnEffect = Time.time + 1 / effectSpawnRate;
         }
@@ -53,7 +57,19 @@ public class Weapon : MonoBehaviour {
         }
     }
 
-    void generateEffect() {
+    //return type allows for yield to be used
+    /*IEnumerator*/void generateEffect() {
         Instantiate(bulletTrailPrefab, firePoint.position, firePoint.rotation);
+        Transform clone = Instantiate(muzzleFlashPrefab, firePoint.position, firePoint.rotation) as Transform; //when assiging to variable remember to cast to what type you expect
+        //parent to firepoint
+        clone.parent = firePoint;
+
+        //randomize size
+        float size = Random.Range(0.4f, 0.7f);
+        clone.localScale = new Vector3(size, size, size);
+
+        //use if you want with coroutine above 
+        //yield return 0; //skip one frame before calling below code
+        Destroy(clone.gameObject, 0.02f);
     }
 }
