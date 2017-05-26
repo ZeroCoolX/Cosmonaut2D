@@ -7,7 +7,7 @@ public class GameMaster : MonoBehaviour {
     //singleton
     public static GameMaster gm;
 
-    void Start() {
+    void Awake() {
         if(gm == null) {
             gm = GameObject.FindGameObjectWithTag("GM").GetComponent<GameMaster>();
         }

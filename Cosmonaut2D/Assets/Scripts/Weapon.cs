@@ -15,6 +15,11 @@ public class Weapon : MonoBehaviour {
     public float timeToSpawnEffect = 0f;
     public float effectSpawnRate = 10f;
 
+    //handle can shake for hits
+    public float camShakeAmount = 0.025f;
+    public float camShakeLength = 0.1f;
+    private CameraShake camShake;
+
     private float timeToFire = 0f;
     private Transform firePoint;
 
@@ -24,9 +29,17 @@ public class Weapon : MonoBehaviour {
             Debug.LogError("For some reason there is no firepoint!");
         }
     }
-	
-	// Update is called once per frame
-	void Update () {
+
+    void Start() {
+        camShake = GameMaster.gm.GetComponent<CameraShake>();
+        if(camShake == null) {
+            Debug.LogError("Camshake was not found on gm object - panic");
+        }
+    }
+
+
+    // Update is called once per frame
+    void Update () {
 		if(fireRate == 0) {//single burst
             if (Input.GetButtonDown("Fire1")) {
                 shoot();
@@ -100,5 +113,8 @@ public class Weapon : MonoBehaviour {
             lr.SetPosition(1, hitPos);//end position index
         }
         Destroy(trail.gameObject, 0.02f);
+
+        //Shake the camera
+        camShake.shake(camShakeAmount, camShakeLength);
     }
 }
