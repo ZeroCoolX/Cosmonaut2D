@@ -19,24 +19,35 @@ public class GameMaster : MonoBehaviour {
 
     public float spawnDelay = 3f;
 
+    public CameraShake camShake;
+
+    void Start() {
+        if(camShake == null) {
+            Debug.LogError("no camshake in game master!");
+        }
+    }
+
     public IEnumerator respawnPlayer() {
         GetComponent<AudioSource>().Play();
         yield return new WaitForSeconds(spawnDelay);
 
         Instantiate(playerPrefab, spawnPoint.position, spawnPoint.rotation);
         Transform clone = Instantiate(spawnPrefab, spawnPoint.position, spawnPoint.rotation) as Transform;
-        Destroy(clone.gameObject, 3f);
+        Destroy(clone.gameObject, 1.5f);
     }
 
     public static void killBaddie(Baddie baddie) {
-        killDashNine(baddie.gameObject, false);
+        Transform clone = Instantiate(baddie.deathParticles, baddie.transform.position, Quaternion.identity) as Transform;
+        Destroy(clone.gameObject, 3f);
+        gm.camShake.shake(baddie.shakeAmt, baddie.shakeLength);
+        gm.killDashNine(baddie.gameObject, false);
     }
 
     public static void killPlayer(Player player) {
-        killDashNine(player.gameObject, true);
+        gm.killDashNine(player.gameObject, true);
     }
 
-    private static void killDashNine(GameObject obj, bool respawn) {
+    private void killDashNine(GameObject obj, bool respawn) {
         Destroy(obj);
         if (respawn) {
             gm.StartCoroutine(gm.respawnPlayer());

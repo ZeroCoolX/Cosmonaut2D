@@ -2,38 +2,47 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : MonoBehaviour {
+public class Baddie : MonoBehaviour {
 
     [System.Serializable]//ensures in unity we can see the classs
-    public class PlayerStats {
+    public class BaddieStats {
         public int maxHealth = 100;
 
+        //actual value
         private int _curHealth;
+        //accessor and mutator
         public int curHealth {
             get { return _curHealth; }
             set { _curHealth = Mathf.Clamp(value, 0, maxHealth); }
         }
 
+        public int damage = 40;
+ 
         public void Init() {
             curHealth = maxHealth;
         }
     }
 
-    public PlayerStats stats = new PlayerStats();
+    public BaddieStats stats = new BaddieStats();
 
+    public Transform deathParticles;
+
+    [Header("Optional: ")]
     [SerializeField]
     private StatusIndicator statusIndicator;
 
-    public int fallBoundary = -20;
-
+    //for death camera shake
+    public float shakeAmt = 0.05f;
+    public float shakeLength = 0.1f;
 
     void Start() {
         stats.Init();
-
-        if(statusIndicator == null) {
-            Debug.Log("No status indicator found on player!");
-        }else {
+        if(statusIndicator != null) {
             statusIndicator.setHealth(stats.curHealth, stats.maxHealth);
+        }
+
+        if(deathParticles == null) {
+            Debug.LogError("no death particles in baddie");
         }
     }
 
@@ -48,14 +57,18 @@ public class Player : MonoBehaviour {
 
     //check if health is exhausted - if so kill em
     private void lifeCheck() {
-        if(stats.curHealth <= 0) {
-            GameMaster.killPlayer(this);
+        if (stats.curHealth <= 0) {
+            GameMaster.killBaddie(this);
         }
     }
 
-    void Update() {
-        if(transform.position.y <= fallBoundary) {
-            damageHealth(stats.maxHealth*9);//arbitrary massive num to ensure death
-        }      
+    //everytime this object collides with another object this method is called
+    private void OnCollisionEnter2D(Collision2D _colInfo) {
+        Player _player = _colInfo.collider.GetComponent<Player>();
+        if(_player != null) {
+            _player.damageHealth(stats.damage);
+            damageHealth(stats.maxHealth * 9);//combust the enemy
+        }
     }
+
 }
