@@ -108,7 +108,7 @@ namespace UnityStandardAssets._2D
         }
 
 
-        private void Flip()
+        private void Flip()//TODO flip the arm and gun so they're not upside down
         {
             // Switch the way the player is labelled as facing.
             m_FacingRight = !m_FacingRight;
