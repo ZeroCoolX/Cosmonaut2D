@@ -29,7 +29,7 @@ public class BaddieAI : MonoBehaviour {
     public bool pathIsEnded = false;
 
     //max dist from ai to waypoint for it to continue onto next waypoint
-    public float nextWaypointDistance = 3f; //how close do we need to get to a waypoint till it says - we reached it - and continue onto the next one
+    public float nextWaypointDistance = 0.1f; //how close do we need to get to a waypoint till it says - we reached it - and continue onto the next one
     //The waypoint we're currently moving towards
     private int currentWaypoint = 0;    //0 based index
 
