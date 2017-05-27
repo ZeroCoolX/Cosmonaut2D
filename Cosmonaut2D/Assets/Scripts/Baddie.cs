@@ -26,6 +26,7 @@ public class Baddie : MonoBehaviour {
     public BaddieStats stats = new BaddieStats();
 
     public Transform deathParticles;
+    public string deathSoundName = "Explosion";
 
     [Header("Optional: ")]
     [SerializeField]

@@ -17,7 +17,10 @@ public class GameMaster : MonoBehaviour {
     public Transform playerPrefab;
     public Transform spawnPoint;
     public Transform spawnPrefab;
-    public string spawnAudioName;
+    public string respawnCountdownSoundName = "RespawnCountdown";
+    public string spawnSoundName = "Spawn";
+
+    public string gameOverSoundName = "GameOver";
 
     public float spawnDelay = 3f;
 
@@ -49,6 +52,8 @@ public class GameMaster : MonoBehaviour {
     }
 
     public void endGame() {
+        audioManager.playSound(gameOverSoundName);
+
         Debug.Log("GAME OVER");
         gameOverUI.SetActive(true);
     }
@@ -57,8 +62,10 @@ public class GameMaster : MonoBehaviour {
         if (_remainingLives <= 0) {
             gm.endGame();
         } else {
-            audioManager.playSound(spawnAudioName);
+            audioManager.playSound(respawnCountdownSoundName);
             yield return new WaitForSeconds(spawnDelay);
+
+            audioManager.playSound(spawnSoundName);
 
             Instantiate(playerPrefab, spawnPoint.position, spawnPoint.rotation);
             Transform clone = Instantiate(spawnPrefab, spawnPoint.position, spawnPoint.rotation) as Transform;
@@ -67,8 +74,14 @@ public class GameMaster : MonoBehaviour {
     }
 
     public static void killBaddie(Baddie baddie) {
+        //Play sound effects
+        gm.audioManager.playSound(baddie.deathSoundName);
+
+        //Add particles
         Transform clone = Instantiate(baddie.deathParticles, baddie.transform.position, Quaternion.identity) as Transform;
         Destroy(clone.gameObject, 3f);
+
+        //Camera shake
         gm.camShake.shake(baddie.shakeAmt, baddie.shakeLength);
         gm.killDashNine(baddie.gameObject, false);
     }

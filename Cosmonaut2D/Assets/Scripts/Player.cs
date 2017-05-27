@@ -26,6 +26,10 @@ public class Player : MonoBehaviour {
 
     public int fallBoundary = -20;
 
+    public string deathSoundName = "DeathVoice";
+    public string damageSoundName = "GruntVoice02";
+
+    private AudioManager audioManager;
 
     void Start() {
         stats.Init();
@@ -35,10 +39,16 @@ public class Player : MonoBehaviour {
         }else {
             statusIndicator.setHealth(stats.curHealth, stats.maxHealth);
         }
+
+        audioManager = AudioManager.instance;
+        if(audioManager == null) {
+            Debug.LogError("Ther was a problem getting the audiop manger");
+        }
     }
 
     //take damage
     public void damageHealth(int dmg) {
+
         stats.curHealth -= dmg;
         if (statusIndicator != null) {
             statusIndicator.setHealth(stats.curHealth, stats.maxHealth);
@@ -49,7 +59,11 @@ public class Player : MonoBehaviour {
     //check if health is exhausted - if so kill em
     private void lifeCheck() {
         if(stats.curHealth <= 0) {
+            //Play sound effect
+            audioManager.playSound(deathSoundName);
             GameMaster.killPlayer(this);
+        }else {
+            audioManager.playSound(damageSoundName);
         }
     }
 
