@@ -7,33 +7,63 @@ public class GameMaster : MonoBehaviour {
     //singleton
     public static GameMaster gm;
 
-    void Awake() {
-        if(gm == null) {
-            gm = GameObject.FindGameObjectWithTag("GM").GetComponent<GameMaster>();
-        }
+    [SerializeField]
+    private int maxLives = 3;
+    private static int _remainingLives;
+    public static int remainingLives {
+        get { return _remainingLives; }
     }
 
     public Transform playerPrefab;
     public Transform spawnPoint;
-    public Transform spawnPrefab; 
+    public Transform spawnPrefab;
+    public string spawnAudioName;
 
     public float spawnDelay = 3f;
 
     public CameraShake camShake;
 
+    [SerializeField]
+    private GameObject gameOverUI;
+
+    //cache
+    private AudioManager audioManager;
+
+    void Awake() {
+        if (gm == null) {
+            gm = GameObject.FindGameObjectWithTag("GM").GetComponent<GameMaster>();
+        }
+    }
+
     void Start() {
         if(camShake == null) {
             Debug.LogError("no camshake in game master!");
         }
+        _remainingLives = maxLives;
+
+        //cache
+        audioManager = AudioManager.instance;
+        if(audioManager == null) {
+            Debug.LogError("FREAK OUT - no audioManager found");
+        }
+    }
+
+    public void endGame() {
+        Debug.Log("GAME OVER");
+        gameOverUI.SetActive(true);
     }
 
     public IEnumerator respawnPlayer() {
-        GetComponent<AudioSource>().Play();
-        yield return new WaitForSeconds(spawnDelay);
+        if (_remainingLives <= 0) {
+            gm.endGame();
+        } else {
+            audioManager.playSound(spawnAudioName);
+            yield return new WaitForSeconds(spawnDelay);
 
-        Instantiate(playerPrefab, spawnPoint.position, spawnPoint.rotation);
-        Transform clone = Instantiate(spawnPrefab, spawnPoint.position, spawnPoint.rotation) as Transform;
-        Destroy(clone.gameObject, 1.5f);
+            Instantiate(playerPrefab, spawnPoint.position, spawnPoint.rotation);
+            Transform clone = Instantiate(spawnPrefab, spawnPoint.position, spawnPoint.rotation) as Transform;
+            Destroy(clone.gameObject, 1.5f);
+        }
     }
 
     public static void killBaddie(Baddie baddie) {
@@ -44,6 +74,7 @@ public class GameMaster : MonoBehaviour {
     }
 
     public static void killPlayer(Player player) {
+        --_remainingLives;
         gm.killDashNine(player.gameObject, true);
     }
 
