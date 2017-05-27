@@ -14,6 +14,10 @@ public class GameMaster : MonoBehaviour {
         get { return _remainingLives; }
     }
 
+    [SerializeField]
+    private int startingCurrency;
+    public static int currency;
+
     public Transform playerPrefab;
     public Transform spawnPoint;
     public Transform spawnPrefab;
@@ -29,6 +33,16 @@ public class GameMaster : MonoBehaviour {
     [SerializeField]
     private GameObject gameOverUI;
 
+    [SerializeField]
+    private GameObject upgradeMenu;
+
+    [SerializeField]
+    private WaveSpawner waveSpawner;
+
+    //a way for us to create a type that stores a bunch of references to functino. Invoking delegate calls functions registered to delegate
+    public delegate void UpgradeMenuCallback(bool active);
+    public UpgradeMenuCallback onToggleUpgradeMenu;
+
     //cache
     private AudioManager audioManager;
 
@@ -42,13 +56,29 @@ public class GameMaster : MonoBehaviour {
         if(camShake == null) {
             Debug.LogError("no camshake in game master!");
         }
+        //set lives
         _remainingLives = maxLives;
+
+        //set currency
+        currency = startingCurrency;
 
         //cache
         audioManager = AudioManager.instance;
         if(audioManager == null) {
             Debug.LogError("FREAK OUT - no audioManager found");
         }
+    }
+
+    private void Update() {//always check for the menu hotkey
+        if (Input.GetKeyDown(KeyCode.U)) {
+            toggleUpgradeMenu();
+        }
+    }
+
+    private void toggleUpgradeMenu() {
+        upgradeMenu.SetActive(!upgradeMenu.activeSelf);
+        waveSpawner.enabled = !upgradeMenu.activeSelf;//disable wave spawner
+        onToggleUpgradeMenu.Invoke(upgradeMenu.activeSelf);
     }
 
     public void endGame() {
@@ -76,6 +106,10 @@ public class GameMaster : MonoBehaviour {
     public static void killBaddie(Baddie baddie) {
         //Play sound effects
         gm.audioManager.playSound(baddie.deathSoundName);
+
+        //reward player for the kill
+        currency += baddie.currencyDrop;
+        gm.audioManager.playSound("Bonus");
 
         //Add particles
         Transform clone = Instantiate(baddie.deathParticles, baddie.transform.position, Quaternion.identity) as Transform;

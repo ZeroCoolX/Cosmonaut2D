@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(BaddieAI))]
 public class Baddie : MonoBehaviour {
 
     [System.Serializable]//ensures in unity we can see the classs
@@ -28,6 +29,8 @@ public class Baddie : MonoBehaviour {
     public Transform deathParticles;
     public string deathSoundName = "Explosion";
 
+    public int currencyDrop = 10;
+
     [Header("Optional: ")]
     [SerializeField]
     private StatusIndicator statusIndicator;
@@ -45,6 +48,7 @@ public class Baddie : MonoBehaviour {
         if(deathParticles == null) {
             Debug.LogError("no death particles in baddie");
         }
+        GameMaster.gm.onToggleUpgradeMenu += onUpgradeMenuToggle;
     }
 
     //take damage
@@ -70,6 +74,16 @@ public class Baddie : MonoBehaviour {
             _player.damageHealth(stats.damage);
             damageHealth(stats.maxHealth * 9);//combust the enemy
         }
+    }
+
+    //called when the upgrade menu is toggled
+    void onUpgradeMenuToggle(bool activeState) {
+        //disable baddie movement controls
+        GetComponent<BaddieAI>().enabled = !activeState;
+    }
+
+    private void OnDestroy() {
+        GameMaster.gm.onToggleUpgradeMenu -= onUpgradeMenuToggle;
     }
 
 }
