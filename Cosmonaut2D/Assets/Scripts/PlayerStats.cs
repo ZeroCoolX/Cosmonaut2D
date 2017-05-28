@@ -16,6 +16,7 @@ public class PlayerStats : MonoBehaviour {
     public float healthRegenRate = 2f;  //how many times per second regeneration occurs
     public int healthRegenValue = 1; //how MUCH regeneration occurs each instance of a regen - can also be upgraded
     public float movementSpeed = 10f; // The fastest the player can travel in the x axis.
+    public int weaponCapacity = 1;
 
 
     void Awake() {

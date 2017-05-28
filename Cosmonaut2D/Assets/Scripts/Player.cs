@@ -58,22 +58,24 @@ public class Player : MonoBehaviour {
 
     //set weapon
     private void selectWeapon(int choice) {
-        Debug.Log("selectWeapon bewing called with choice: " + choice);
-        //if either of these are null that means the user is trying to switch weapons while they're dead - which I just won't allow
-        if (machineGun != null && pistol != null) {
-            machineGun.SetActive(false);
-            pistol.SetActive(false);
-            //set player weapon choice
-            switch (choice) {
-                case 1://pistol selected
-                    pistol.SetActive(true);
-                    break;
-                case 2://machine gun selcted
-                    machineGun.SetActive(true);
-                    break;
-                default://default to pistol
-                    pistol.SetActive(true);
-                    break;
+        //only allow weapon switching if they HAVE the weapon (for now)
+        if (choice <= stats.weaponCapacity) {
+            //if either of these are null that means the user is trying to switch weapons while they're dead - which I just won't allow
+            if (machineGun != null && pistol != null) {
+                machineGun.SetActive(false);
+                pistol.SetActive(false);
+                //set player weapon choice
+                switch (choice) {
+                    case 1://pistol selected
+                        pistol.SetActive(true);
+                        break;
+                    case 2://machine gun selcted
+                        machineGun.SetActive(true);
+                        break;
+                    default://default to pistol
+                        pistol.SetActive(true);
+                        break;
+                }
             }
         }
     }
