@@ -18,5 +18,5 @@ public class ArmRotation : MonoBehaviour {
 
         //apply the rotation
         transform.rotation = Quaternion.Euler(0f, 0f, rotZ + rotationOffset);//degrees not radians
-	}
+    }
 }

@@ -22,8 +22,11 @@ namespace UnityStandardAssets._2D
         private Animator m_Anim;            // Reference to the player's animator component.
         private Rigidbody2D m_Rigidbody2D;
         private bool m_FacingRight = true;  // For determining which way the player is currently facing.
+        private bool m_RightSideUp = true;  //  for determining if the arm should be inverted for left vs right direction
 
         private Transform playerGraphics;   //REference to the player graphics so we can change direction ourself
+
+        public Transform playerArm;        //ref to the arm used for roataion determined facing
 
         AudioManager audioManager;
 
@@ -44,7 +47,7 @@ namespace UnityStandardAssets._2D
             playerGraphics = transform.FindChild("Graphics");
             if(playerGraphics == null) {
                 //couldn't find the graphics object
-                Debug.LogError("No player graphics detected as a child of the player. This is bad");
+                Debug.LogError("PlatformCharacter2D.cs - No player graphics detected as a child of the player. This is bad");
             }
         }
 
@@ -66,7 +69,7 @@ namespace UnityStandardAssets._2D
             }
             m_Anim.SetBool("Ground", m_Grounded);
 
-            if(wasGrounded != m_Grounded && m_Grounded) {//TODO: landing sound is actuaally played twice - one for jump, one for landing. but w/e for now
+            if(wasGrounded != m_Grounded && m_Grounded) {//TODO: landing sound is actuaally played twice - one for jump, one for landing. but w/e for now. maddie didnt notice. no....
                 audioManager.playSound(landingFootSoundName);
             }
 
@@ -102,18 +105,27 @@ namespace UnityStandardAssets._2D
                 // Move the character
                 m_Rigidbody2D.velocity = new Vector2(move*PlayerStats.instance.movementSpeed, m_Rigidbody2D.velocity.y);
 
-                // If the input is moving the player right and the player is facing left...
-                if (move > 0 && !m_FacingRight)
-                {
-                    // ... flip the player.
+
+                //Rotate the player based on direction pointing - its more natural
+                Vector3 diff = Camera.main.ScreenToWorldPoint(Input.mousePosition) - playerArm.position;
+                //Normalize the vector x + y + z = 1
+                diff.Normalize();
+                //find the angle in degrees
+                float rotZ = Mathf.Abs(Mathf.Atan2(diff.y, diff.x) * Mathf.Rad2Deg);
+                if((rotZ <= 90f) && !m_FacingRight) {
+                    //face right
                     Flip();
-                }
-                    // Otherwise if the input is moving the player left and the player is facing right...
-                else if (move < 0 && m_FacingRight)
-                {
-                    // ... flip the player.
+                    if (!m_RightSideUp) {
+                        invertArm();
+                    }
+                } else if ((rotZ > 90f) && m_FacingRight) {
+                    //face left
                     Flip();
+                    if (m_RightSideUp) {
+                        invertArm();
+                    }
                 }
+
             }
             // If the player should jump...
             if (m_Grounded && jump && m_Anim.GetBool("Ground"))
@@ -126,7 +138,7 @@ namespace UnityStandardAssets._2D
         }
 
 
-        private void Flip()//TODO flip the arm and gun so they're not upside down
+        private void Flip()
         {
             // Switch the way the player is labelled as facing.
             m_FacingRight = !m_FacingRight;
@@ -135,6 +147,16 @@ namespace UnityStandardAssets._2D
             Vector3 theScale = playerGraphics.localScale;
             theScale.x *= -1;
             playerGraphics.localScale = theScale;
+        }
+
+        private void invertArm() {
+            //switch the way the arm is labeled as facing
+            m_RightSideUp = !m_RightSideUp;
+
+            // Multiply the player's x local scale by -1.
+            Vector3 theScale = playerArm.localScale;
+            theScale.y *= -1;
+            playerArm.localScale = theScale;
         }
     }
 }
