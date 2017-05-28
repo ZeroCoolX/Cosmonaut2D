@@ -13,9 +13,9 @@ public class PlayerStats : MonoBehaviour {
         set { _curHealth = Mathf.Clamp(value, 0, maxHealth); }
     }
 
-    public float healthRegenRate = 2f;
-
-    public float movementSpeed = 10f;                    // The fastest the player can travel in the x axis.
+    public float healthRegenRate = 2f;  //how many times per second regeneration occurs
+    public int healthRegenValue = 1; //how MUCH regeneration occurs each instance of a regen - can also be upgraded
+    public float movementSpeed = 10f; // The fastest the player can travel in the x axis.
 
 
     void Awake() {
